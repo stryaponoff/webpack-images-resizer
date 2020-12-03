@@ -103,10 +103,12 @@ class WebpackImagesResizer {
 
         tinify.key = options.tinifyKey;
 
+        this.disableWatch = options.disableWatch || false;
+
         this.options = options;
 
         this.changed = true;
-        
+
         this.watcher = null;
         this.watchStarted = false;
 
@@ -116,11 +118,15 @@ class WebpackImagesResizer {
     addDependency(dependencies, path) {
         if(Array.isArray(dependencies)) dependencies.push(path);
         else dependencies.add(path);
-        
+
         this.addToWatch(path);
     }
-    
+
     addToWatch(path) {
+        if (this.disableWatch) {
+            return;
+        }
+
         if(!this.watcher) {
             this.watcher = chokidar.watch(path, {ignoreInitial: true});
             this.watcher.on('all', this.onFsChanges);
